@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
   private void Awake()
   {
     VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-    livesLabel = root.Q<Label>("livesremaining");
+    livesLabel = root.Q<Label>("lives");
     respawnLabel = root.Q<Label>("respawn");
     levelLabel = root.Q<Label>("level");
 
