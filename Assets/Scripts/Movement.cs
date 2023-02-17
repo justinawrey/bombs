@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 
 enum Direction
@@ -26,9 +24,7 @@ public class Movement : MonoBehaviour
   public LayerMask ladderLayer;
   public LayerMask flagLayer;
   private GameObject flag;
-  private Label livesUI;
-  private Label respawnUI;
-  private Label levelUI;
+  private UIManager UIManager;
 
   public int lives = 3;
 
@@ -47,46 +43,8 @@ public class Movement : MonoBehaviour
     // Get the flag
     flag = GameObject.Find("Flag");
 
-    // Get the lives UI
-    VisualElement root = GameObject.Find("UIDocument").GetComponent<UIDocument>().rootVisualElement;
-    livesUI = root.Q<Label>("livesremaining");
-    respawnUI = root.Q<Label>("respawn");
-    levelUI = root.Q<Label>("level");
-
-    SetLivesUITo(lives);
-    respawnUI.visible = false;
-
-    levelUI.text = SceneManager.GetActiveScene().name;
-  }
-
-  void SetLivesUITo(int num)
-  {
-    livesUI.text = "♡ x " + num;
-  }
-
-  void SetRemainingRespawnTime(int num)
-  {
-    respawnUI.text = "Respawning in " + num + "...";
-  }
-
-  void Respawn3()
-  {
-    SetRemainingRespawnTime(3);
-  }
-
-  void Respawn2()
-  {
-    SetRemainingRespawnTime(2);
-  }
-
-  void Respawn1()
-  {
-    SetRemainingRespawnTime(1);
-  }
-
-  void HideRespawnText()
-  {
-    respawnUI.visible = false;
+    UIManager = GameObject.Find("UI").GetComponent<UIManager>();
+    UIManager.SetLivesLabel(lives);
   }
 
   void Update()
@@ -203,7 +161,7 @@ public class Movement : MonoBehaviour
     lives -= 1;
     if (lives < 0)
     {
-      livesUI.text = "Game over :( Retrying...";
+      UIManager.SetGameOverLabel();
       Invoke("GameOver", 1);
       return;
     }
@@ -211,19 +169,14 @@ public class Movement : MonoBehaviour
     bool destroyedFlag = DestroySurroundings();
     if (destroyedFlag)
     {
-      livesUI.text = "Game over :( Retrying...";
+      UIManager.SetGameOverLabel();
       Invoke("GameOver", 1);
       return;
     }
 
-    SetLivesUITo(lives);
+    UIManager.SetLivesLabel(lives);
     gameObject.GetComponent<SpriteRenderer>().enabled = false;
-
-    respawnUI.visible = true;
-    Invoke("Respawn3", 0);
-    Invoke("Respawn2", 1);
-    Invoke("Respawn1", 2);
-    Invoke("HideRespawnText", 3);
+    UIManager.StartRespawnSequence();
     Invoke("Respawn", 3);
   }
 
