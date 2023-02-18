@@ -5,12 +5,16 @@ public class FlagToss : MonoBehaviour
   private InputManagement input;
   private Collision collision;
   private GameObject flag;
+  private GameObject throwRange;
+  private GameObject throwMarker;
 
   void Awake()
   {
     input = GetComponent<InputManagement>();
     collision = GetComponent<Collision>();
     flag = GameObject.Find("Flag");
+    throwRange = gameObject.transform.Find("ThrowRange").gameObject;
+    throwMarker = gameObject.transform.Find("ThrowMarker").gameObject;
   }
 
   // Update is called once per frame
@@ -23,18 +27,28 @@ public class FlagToss : MonoBehaviour
       // pick it up if you dont have it
       if (!HasFlag() && collision.IsOnFlag())
       {
-        flag.transform.SetParent(this.gameObject.transform);
-        flag.transform.position += new Vector3(0, 0.25f, 0f);
-        flag.GetComponent<Rigidbody2D>().simulated = false;
-        gameObject.transform.Find("ThrowRange").gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        PickupFlag();
       }
       // put it down if you have it
       else if (HasFlag() && CanPutDownFlag())
       {
-        flag.transform.parent = null;
-        flag.transform.position -= new Vector3(0, 0.25f, 0f);
-        flag.GetComponent<Rigidbody2D>().simulated = true;
-        gameObject.transform.Find("ThrowRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        PutDownFlag();
+      }
+    }
+    else if (action == Action.Throw)
+    {
+      PutDownFlag();
+      flag.transform.position = throwMarker.transform.position;
+    }
+
+    if (HasFlag())
+    {
+      Vector3 mousePos = input.GetMousePosition();
+      Vector3 rounded = new Vector3(Mathf.RoundToInt(mousePos.x), Mathf.RoundToInt(mousePos.y), 0);
+
+      if (throwRange.GetComponent<SpriteRenderer>().bounds.Contains(rounded))
+      {
+        throwMarker.transform.position = rounded;
       }
     }
   }
@@ -49,5 +63,23 @@ public class FlagToss : MonoBehaviour
     // Cant put it down if youre in the middle of a ladder but
     // you can if youre standing at the bottom of the ladder
     return !collision.IsOnLadder() || collision.BlockInDir(Direction.Down);
+  }
+
+  private void PickupFlag()
+  {
+    flag.transform.SetParent(this.gameObject.transform);
+    flag.transform.position += new Vector3(0, 0.25f, 0f);
+    flag.GetComponent<Rigidbody2D>().simulated = false;
+    throwRange.GetComponent<SpriteRenderer>().enabled = true;
+    throwMarker.GetComponent<SpriteRenderer>().enabled = true;
+  }
+
+  private void PutDownFlag()
+  {
+    flag.transform.parent = null;
+    flag.transform.position -= new Vector3(0, 0.25f, 0f);
+    flag.GetComponent<Rigidbody2D>().simulated = true;
+    throwRange.GetComponent<SpriteRenderer>().enabled = false;
+    throwMarker.GetComponent<SpriteRenderer>().enabled = false;
   }
 }

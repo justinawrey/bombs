@@ -8,6 +8,7 @@ enum Action
   MoveDown,
   Carry,
   Explode,
+  Throw,
   None
 }
 
@@ -37,6 +38,17 @@ class InputManagement : MonoBehaviour
       return Action.Explode;
     }
 
+    if (Input.GetMouseButtonDown(0))
+    {
+      return Action.Throw;
+    }
+
     return Action.None;
+  }
+
+  public Vector3 GetMousePosition()
+  {
+    Vector3 mousePos = Input.mousePosition;
+    return Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane + 1));
   }
 }
