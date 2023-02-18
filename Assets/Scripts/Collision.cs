@@ -20,31 +20,36 @@ class Collision : MonoBehaviour
   public LayerMask ladderLayer;
   public LayerMask flagLayer;
 
-  private bool IsInDir(Direction dir, LayerMask layer)
+  public bool IsInDir(Direction dir, LayerMask layer, Vector3 from)
   {
     switch (dir)
     {
       case Direction.Left:
-        return Physics2D.OverlapBox(transform.position + new Vector3(-1f, 0f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(-1f, 0f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.Right:
-        return Physics2D.OverlapBox(transform.position + new Vector3(1f, 0f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(1f, 0f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.Up:
-        return Physics2D.OverlapBox(transform.position + new Vector3(0f, 1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(0f, 1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.Down:
-        return Physics2D.OverlapBox(transform.position + new Vector3(0f, -1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(0f, -1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.Center:
-        return Physics2D.OverlapBox(transform.position + new Vector3(0f, 0f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(0f, 0f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.NE:
-        return Physics2D.OverlapBox(transform.position + new Vector3(-1f, 1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(-1f, 1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.NW:
-        return Physics2D.OverlapBox(transform.position + new Vector3(1f, 1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(1f, 1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.SW:
-        return Physics2D.OverlapBox(transform.position + new Vector3(1f, -1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(1f, -1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       case Direction.SE:
-        return Physics2D.OverlapBox(transform.position + new Vector3(-1f, -1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
+        return Physics2D.OverlapBox(from + new Vector3(-1f, -1f, 0f), new Vector2(0.25f, 0.25f), 0f, layer);
       default:
         return false;
     }
+  }
+
+  private bool IsInDir(Direction dir, LayerMask layer)
+  {
+    return IsInDir(dir, layer, transform.position);
   }
 
   public bool BlockInDir(Direction dir)

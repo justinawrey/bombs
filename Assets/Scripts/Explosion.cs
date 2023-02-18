@@ -93,7 +93,7 @@ public class Explosion : MonoBehaviour
 
     UIManager.SetLivesLabel(lives);
     gameObject.GetComponent<SpriteRenderer>().enabled = false;
-    UIManager.StartRespawnSequence();
+    StartCoroutine(UIManager.RespawnSequence());
     Invoke("Respawn", 3);
   }
 }

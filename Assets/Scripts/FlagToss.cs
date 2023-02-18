@@ -35,7 +35,7 @@ public class FlagToss : MonoBehaviour
         PutDownFlag();
       }
     }
-    else if (action == Action.Throw)
+    else if (action == Action.Throw && HasFlag())
     {
       PutDownFlag();
       flag.transform.position = throwMarker.transform.position;
@@ -46,14 +46,17 @@ public class FlagToss : MonoBehaviour
       Vector3 mousePos = input.GetMousePosition();
       Vector3 rounded = new Vector3(Mathf.RoundToInt(mousePos.x), Mathf.RoundToInt(mousePos.y), 0);
 
-      if (throwRange.GetComponent<SpriteRenderer>().bounds.Contains(rounded))
+      bool onBlock = collision.IsInDir(Direction.Down, collision.blockLayer | collision.ladderLayer, rounded);
+      bool inAir = !collision.IsInDir(Direction.Center, collision.blockLayer | collision.ladderLayer, rounded);
+
+      if (throwRange.GetComponent<SpriteRenderer>().bounds.Contains(rounded) && onBlock && inAir)
       {
         throwMarker.transform.position = rounded;
       }
     }
   }
 
-  private bool HasFlag()
+  public bool HasFlag()
   {
     return flag.transform.IsChildOf(this.gameObject.transform);
   }

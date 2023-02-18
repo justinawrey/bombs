@@ -6,6 +6,7 @@ public class Movement : MonoBehaviour
   public Transform target;
   private InputManagement input;
   private Collision collision;
+  private FlagToss flagToss;
 
   public int lives = 3;
 
@@ -22,6 +23,7 @@ public class Movement : MonoBehaviour
     Destroy(cube.GetComponent<MeshFilter>());
 
     collision = GetComponent<Collision>();
+    flagToss = GetComponent<FlagToss>();
     input = GetComponent<InputManagement>();
   }
 
@@ -44,13 +46,13 @@ public class Movement : MonoBehaviour
       }
 
       // User input up
-      else if (action == Action.MoveUp && collision.IsOnLadder())
+      else if (action == Action.MoveUp && collision.IsOnLadder() && !flagToss.HasFlag())
       {
         target.position += new Vector3(0f, 1f, 0f);
       }
 
       // User input down
-      else if (action == Action.MoveDown && collision.LadderInDir(Direction.Down))
+      else if (action == Action.MoveDown && collision.LadderInDir(Direction.Down) && !flagToss.HasFlag())
       {
         target.position += new Vector3(0f, -1f, 0f);
       }
